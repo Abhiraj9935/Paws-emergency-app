@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>PAWS | Animal Rescue</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.22.0/dist/tf.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd@2.2.3"></script>
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="#">🐾 PAWS <span>Animal Rescue</span></a>
+  <nav>
+    <a href="#camera">Live camera</a>
+    <a href="#sos">SOS</a>
+    <a href="register.html">Join our team</a>
+    <a href="login.html">Login</a>
+  </nav>
+</header>
+<main>
+<section class="hero">
+  <div>
+    <p class="eyebrow">AUTOMATIC CAMERA SCAN & INJURY DETECTOR</p>
+    <h1>Every paw deserves<br><em>a helping hand.</em></h1>
+    <p>Point the camera at an animal. PAWS automatically captures the frame, evaluates for visible injuries via AI, and opens the SOS alert form.</p>
+    <a class="button" href="#camera">Open rescue camera</a>
+  </div>
+  <div class="hero-art" aria-hidden="true">🐕‍🦺<span>♡</span></div>
+</section>
+
+<section class="panel" id="camera">
+  <div class="section-head">
+    <div>
+      <p class="eyebrow">AUTO SCANNER</p>
+      <h2>Live rescue camera</h2>
+    </div>
+    <span class="pill" id="modelStatus">Dog AI loading…</span>
+  </div>
+  <p class="muted">Start the camera below. When a dog is detected, the camera automatically captures the image, assesses for injuries, and navigates to the SOS form.</p>
+  
+  <div class="camera-grid">
+    <div class="video-wrap">
+      <video id="video" autoplay muted playsinline></video>
+      <canvas id="overlay"></canvas>
+      <div id="cameraPlaceholder">📷<br>Camera preview appears here</div>
+    </div>
+    
+    <div class="camera-side">
+      <div class="stat"><span>Dog detection</span><strong id="detectionStatus">Waiting for camera</strong></div>
+      <div class="stat"><span>Injury status</span><strong id="injuryStatus">Waiting for detection…</strong></div>
+      <div class="stat"><span>Latest detection</span><strong id="latestDetection">No detection yet</strong></div>
+      <div class="stat"><span>Model confidence</span><strong id="confidence">—</strong></div>
+      <button class="button" id="startCamera">Start camera + AI</button>
+      <button class="button secondary" id="stopCamera" disabled>Stop camera</button>
+    </div>
+  </div>
+
+  <div class="notice" style="margin-top: 15px;">
+    <strong>AI Injury Assessment Output:</strong>
+    <p id="geminiResult" style="margin-top: 5px;">Camera idle. Point at a dog to run automatic injury scan.</p>
+  </div>
+</section>
+
+<section class="panel" id="sos">
+  <p class="eyebrow">URGENT REPORT</p>
+  <h2>Send an SOS</h2>
+  <p class="muted">Details automatically fill below when an injured animal is scanned.</p>
+  <form id="sosForm">
+    <div class="form-grid">
+      <label>Reporter name<input id="reporterName" required placeholder="Your name"></label>
+      <label>Callback number<input id="reporterPhone" required type="tel" placeholder="+91…"></label>
+      <label class="full">What did you observe?<textarea id="incident" required rows="4" placeholder="Describe the dog's condition and exact landmark…"></textarea></label>
+      <label class="check full"><input id="injuryConfirmed" type="checkbox" required> I have reviewed the report and confirm assistance is needed.</label>
+    </div>
+    <div class="actions">
+      <button class="button" type="submit" id="sendSOS">Get location & send SOS</button>
+      <button class="button secondary" type="button" id="getLocation">Get my location</button>
+    </div>
+    <p id="sosMessage" role="status"></p>
+    <p id="locationText" class="muted">Location not captured yet.</p>
+  </form>
+</section>
+</main>
+
+<footer>PAWS Animal Rescue · Automated Emergency Response System.</footer>
+<script src="gemini-config.js"></script>
+<script type="module" src="app.js"></script>
+<!-- Add this in your <nav> header on index.html -->
+<nav>
+  <a href="index.html">Public Camera</a>
+  <a href="responder.html" class="button secondary" style="padding: 6px 14px;">Responder Portal 🚨</a>
+</nav>
+
+</body>
+</html>

@@ -1,0 +1,23 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Responder profiles: each signed-in user may read/write only their own profile.
+    match /responders/{uid} {
+      allow create: if request.auth != null && request.auth.uid == uid;
+      allow read, update, delete: if request.auth != null && request.auth.uid == uid;
+    }
+    // Prototype: any signed-in account may submit an SOS. Only its reporter can read it.
+    // For production, move dispatch and responder matching to a trusted backend and add
+    // role-based access so verified responders/coordinators can view assigned reports.
+    match /sosReports/{reportId} {
+      allow create: if request.auth != null
+        && request.resource.data.reporterName is string
+        && request.resource.data.reporterPhone is string
+        && request.resource.data.incident is string
+        && request.resource.data.location.latitude is number
+        && request.resource.data.location.longitude is number;
+      allow read: if false;
+      allow update, delete: if false;
+    }
+  }
+}

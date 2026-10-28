@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PAWS - Responder Registration & Analytics</title>
+  
+  <style>
+    /* Reset & Base Green Theme Variables */
+    :root {
+      --primary-green: #146b4b;
+      --accent-green: #16a34a;
+      --light-green-bg: #e6f4ea;
+      --border-green: #bbf7d0;
+      --bg-slate: #f8fafc;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-slate);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: var(--text-main);
+      line-height: 1.5;
+    }
+
+    /* Container & Header */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 16px;
+    }
+    
+    header {
+      background: var(--primary-green);
+      border-bottom: 1px solid #115e3b;
+      padding: 16px 0;
+      box-shadow: 0 4px 6px -1px rgba(20, 107, 75, 0.15);
+    }
+    header h1 {
+      font-size: 1.25rem;
+      color: #ffffff;
+    }
+    nav a {
+      margin-left: 18px;
+      text-decoration: none;
+      color: #a7f3d0;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    nav a:hover {
+      color: #ffffff;
+    }
+
+    /* Grid Layout */
+    .register-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-top: 32px;
+      margin-bottom: 40px;
+    }
+    @media (max-width: 768px) {
+      .register-grid { grid-template-columns: 1fr; }
+    }
+
+    /* Card Box Styling */
+    .card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 24px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.04);
+      transition: all 0.3s ease;
+    }
+    .card h2, .card h3 {
+      margin-bottom: 8px;
+      color: var(--primary-green);
+    }
+    .muted {
+      color: var(--text-muted);
+    }
+
+    /* Form Fields */
+    label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #334155;
+      margin-bottom: 4px;
+    }
+    input, select {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      background: #fff;
+      color: #0f172a;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    input:focus, select:focus {
+      border-color: var(--accent-green);
+      box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.15);
+    }
+
+    /* Green Buttons */
+    .button {
+      display: inline-block;
+      width: 100%;
+      padding: 11px 16px;
+      background: var(--primary-green);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      cursor: pointer;
+      text-align: center;
+      transition: background 0.2s ease;
+    }
+    .button:hover {
+      background: #115e3b;
+    }
+
+    /* Red Flashing Alert animation for incoming reports */
+    @keyframes alertFlash {
+      0%, 100% { background-color: #ffffff; border-color: #e2e8f0; }
+      50% { background-color: #fef2f2; border-color: #ef4444; box-shadow: 0 0 20px rgba(239, 68, 68, 0.4); }
+    }
+    .flash-alert {
+      animation: alertFlash 1s ease-in-out infinite;
+    }
+
+    /* Metric Stat Cards */
+    .stat-card {
+      padding: 14px;
+      border-radius: 8px;
+      text-align: center;
+      border: 1px solid transparent;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container" style="display: flex; justify-content: space-between; align-items: center;">
+      <h1 style="display: flex; align-items: center; gap: 8px;">🐾 PAWS <span style="font-weight: 300; font-size: 0.9rem; color: #a7f3d0;">Emergency Network</span></h1>
+      <nav>
+        <a href="index.html">Home / Report SOS</a>
+        <a href="responder.html">Responder Dashboard</a>
+        <a href="login.html">Sign In</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="register-grid">
+      
+      <!-- Minimal Registration Form Section -->
+      <section class="card">
+        <h2>Join as Verified Responder</h2>
+        <p class="muted" style="margin-bottom: 18px; font-size: 0.9rem;">
+          Create your account to join our emergency animal response network.
+        </p>
+
+        <form id="registerForm" style="display: grid; gap: 14px;">
+          <div>
+            <label for="name">Full Name</label>
+            <input type="text" id="name" placeholder="Dr. Rahul Sharma" required>
+          </div>
+
+          <div>
+            <label for="email">Email Address</label>
+            <input type="email" id="email" placeholder="responder@paws.org" required>
+          </div>
+
+          <div>
+            <label for="password">Password</label>
+            <input type="password" id="password" placeholder="••••••••" required>
+          </div>
+
+          <div>
+            <label for="phone">Phone Number</label>
+            <input type="tel" id="phone" placeholder="+91 98765 43210" required>
+          </div>
+
+          <div>
+            <label for="role">Responder Role</label>
+            <select id="role">
+              <option value="volunteer">Volunteer Responder</option>
+              <option value="veterinarian">Veterinarian Doctor (Vet)</option>
+              <option value="ngo">NGO Rescue Team</option>
+            </select>
+          </div>
+
+          <div id="licenseWrap" hidden>
+            <label for="license">Veterinary License Number</label>
+            <input type="text" id="license" placeholder="VET-REG-XXXXX">
+          </div>
+
+          <div>
+            <label for="area">Service Area / City</label>
+            <input type="text" id="area" placeholder="Kanpur Central Zone" required>
+          </div>
+
+          <button type="submit" class="button" style="margin-top: 6px;">Create Account</button>
+        </form>
+        
+        <p id="message" style="margin-top: 12px; font-size: 0.9rem; font-weight: 600;"></p>
+      </section>
+
+      <!-- Live SOS Analytics & Status Flow Chart -->
+      <section id="alertMonitorCard" class="card" style="display: flex; flex-direction: column; justify-content: space-between;">
+        <div>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+            <h3>📊 Live Case Status Flow</h3>
+            <span id="regFeedStatus" style="font-size: 0.75rem; padding: 4px 10px; background: #e6f4ea; color: #137333; border: 1px solid #bbf7d0; border-radius: 4px; font-weight: 600;">
+              Connecting...
+            </span>
+          </div>
+
+          <p class="muted" style="font-size: 0.85rem; margin-bottom: 24px;">
+            Real-time emergency case breakdown across active open reports, dispatched responders, and resolved cases.
+          </p>
+
+          <!-- Stat Counters -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 24px;">
+            <div class="stat-card" style="background: #fef2f2; border-color: #fecaca;">
+              <span id="countOpen" style="font-size: 1.5rem; font-weight: 700; color: #dc2626;">0</span>
+              <p style="margin: 0; font-size: 0.8rem; color: #991b1b; font-weight: 600;">🚨 Active Open</p>
+            </div>
+            
+            <div class="stat-card" style="background: #eff6ff; border-color: #bfdbfe;">
+              <span id="countClaimed" style="font-size: 1.5rem; font-weight: 700; color: #2563eb;">0</span>
+              <p style="margin: 0; font-size: 0.8rem; color: #1e40af; font-weight: 600;">🚑 Dispatched</p>
+            </div>
+            
+            <div class="stat-card" style="background: #f0fdf4; border-color: #bbf7d0;">
+              <span id="countResolved" style="font-size: 1.5rem; font-weight: 700; color: #16a34a;">0</span>
+              <p style="margin: 0; font-size: 0.8rem; color: #166534; font-weight: 600;">✅ Resolved</p>
+            </div>
+          </div>
+
+          <!-- Multi-Segment Flow Distribution Bar -->
+          <label style="margin-bottom: 8px;">Case Distribution Flow</label>
+          <div style="height: 16px; width: 100%; background: #e2e8f0; border-radius: 8px; overflow: hidden; display: flex; margin-bottom: 20px;">
+            <div id="barOpen" style="width: 0%; background: #dc2626; height: 100%; transition: width 0.4s ease;"></div>
+            <div id="barClaimed" style="width: 0%; background: #2563eb; height: 100%; transition: width 0.4s ease;"></div>
+            <div id="barResolved" style="width: 0%; background: #16a34a; height: 100%; transition: width 0.4s ease;"></div>
+          </div>
+
+          <!-- Percentage Breakdown Legend -->
+          <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: #64748b; font-weight: 500;">
+            <span><strong style="color: #dc2626;">Open:</strong> <span id="pctOpen">0%</span></span>
+            <span><strong style="color: #2563eb;">Dispatched:</strong> <span id="pctClaimed">0%</span></span>
+            <span><strong style="color: #16a34a;">Resolved:</strong> <span id="pctResolved">0%</span></span>
+          </div>
+        </div>
+
+        <div style="margin-top: 32px; padding-top: 16px; border-top: 1px solid #e2e8f0; text-align: center;">
+          <small class="muted">Total SOS Reports Registered: <strong id="totalCount" style="color: var(--primary-green);">0</strong></small>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Audio Alert Sound -->
+  <audio id="sosAudio" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto"></audio>
+
+  <!-- Core App JS -->
+  <script type="module" src="app.js"></script>
+
+  <!-- Standalone Listener Script for Real-Time Flow Chart -->
+  <script type="module">
+    import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+    import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+    import { firebaseConfig } from "./firebase-config.js";
+
+    if (firebaseConfig && firebaseConfig.apiKey) {
+      const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
+      const db = getFirestore(app);
+      let isInitial = true;
+
+      const monitorCard = document.getElementById("alertMonitorCard");
+      const statusLabel = document.getElementById("regFeedStatus");
+      const audioEl = document.getElementById("sosAudio");
+
+      onSnapshot(collection(db, "sosReports"), (snapshot) => {
+        const total = snapshot.docs.length;
+
+        if (statusLabel) {
+          statusLabel.textContent = `LIVE SYSTEM (${total})`;
+          statusLabel.style.background = "#e6f4ea";
+          statusLabel.style.color = "#137333";
+        }
+
+        // Trigger Audio & Red Flashing Border Light on new incoming SOS
+        if (!isInitial && !snapshot.empty) {
+          const hasNewReport = snapshot.docChanges().some(c => c.type === "added");
+          if (hasNewReport) {
+            if (audioEl) audioEl.play().catch(e => console.log("Audio play blocked:", e));
+            monitorCard.classList.add("flash-alert");
+            setTimeout(() => { monitorCard.classList.remove("flash-alert"); }, 5000);
+          }
+        }
+        isInitial = false;
+
+        let openCount = 0;
+        let claimedCount = 0;
+        let resolvedCount = 0;
+
+        snapshot.docs.forEach(doc => {
+          const status = doc.data().status || "open";
+          if (status === "resolved") resolvedCount++;
+          else if (status === "in-progress") claimedCount++;
+          else openCount++;
+        });
+
+        // Update Stat Counters
+        document.getElementById("countOpen").textContent = openCount;
+        document.getElementById("countClaimed").textContent = claimedCount;
+        document.getElementById("countResolved").textContent = resolvedCount;
+        document.getElementById("totalCount").textContent = total;
+
+        // Calculate Percentages and Flow Chart Bar Widths
+        if (total > 0) {
+          const openPct = Math.round((openCount / total) * 100);
+          const claimedPct = Math.round((claimedCount / total) * 100);
+          const resolvedPct = Math.round((resolvedCount / total) * 100);
+
+          document.getElementById("barOpen").style.width = openPct + "%";
+          document.getElementById("barClaimed").style.width = claimedPct + "%";
+          document.getElementById("barResolved").style.width = resolvedPct + "%";
+
+          document.getElementById("pctOpen").textContent = openPct + "%";
+          document.getElementById("pctClaimed").textContent = claimedPct + "%";
+          document.getElementById("pctResolved").textContent = resolvedPct + "%";
+        } else {
+          document.getElementById("barOpen").style.width = "0%";
+          document.getElementById("barClaimed").style.width = "0%";
+          document.getElementById("barResolved").style.width = "0%";
+          document.getElementById("pctOpen").textContent = "0%";
+          document.getElementById("pctClaimed").textContent = "0%";
+          document.getElementById("pctResolved").textContent = "0%";
+        }
+      }, (err) => {
+        if (statusLabel) {
+          statusLabel.textContent = "Offline";
+          statusLabel.style.background = "#fef2f2";
+          statusLabel.style.color = "#991b1b";
+        }
+      });
+    }
+  </script>
+</body>
+</html>

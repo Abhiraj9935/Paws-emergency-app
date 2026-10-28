@@ -1,0 +1,13 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /sos-photos/{fileName} {
+      // Starter rule: require a signed-in user and limit uploads to image files under 5 MB.
+      // For production, enforce report ownership and use a trusted backend for responder access.
+      allow write: if request.auth != null
+                   && request.resource.size < 5 * 1024 * 1024
+                   && request.resource.contentType.matches('image/.*');
+      allow read: if request.auth != null;
+    }
+  }
+}
