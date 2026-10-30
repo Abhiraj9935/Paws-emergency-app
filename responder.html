@@ -4,19 +4,18 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>PAWS - Verified Responder Command Center</title>
-  <link rel="stylesheet" href="style.css">
   <style>
-    /* Green Choir Theme Extensions & Variables */
     :root {
-      --primary-green: #16a34a;
-      --primary-dark: #146b4b;
+      --primary-green: #146b4b;
+      --accent-green: #16a34a;
       --accent-red: #dc2626;
       --accent-blue: #2563eb;
       --bg-slate: #f8fafc;
-      --border-color: #d1fae5;
       --text-main: #0f172a;
       --text-muted: #64748b;
     }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
       background-color: var(--bg-slate);
@@ -24,39 +23,20 @@
       color: var(--text-main);
     }
 
-    /* Green Header Bar */
     header {
-      background: #146b4b;
+      background: var(--primary-green);
       border-bottom: 1px solid #115e3b;
       padding: 16px 0;
       color: white;
       box-shadow: 0 4px 6px -1px rgba(20, 107, 75, 0.15);
     }
-    header h1 {
-      font-size: 1.25rem;
-      color: #ffffff;
-      letter-spacing: -0.01em;
-    }
-    header nav a, header nav button {
-      color: #a7f3d0;
-      text-decoration: none;
-      font-size: 0.9rem;
-      font-weight: 500;
-      margin-left: 18px;
-      transition: color 0.2s;
-    }
-    header nav a:hover {
-      color: #ffffff;
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 16px;
     }
 
-    /* Animated Emergency Pulse for Open Cases */
-    @keyframes sosPulse {
-      0% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.4); }
-      70% { box-shadow: 0 0 0 12px rgba(220, 38, 38, 0); }
-      100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0); }
-    }
-
-    /* Dynamic Card Styles */
     .sos-card {
       border: 1px solid #e2e8f0;
       border-radius: 10px;
@@ -64,13 +44,9 @@
       margin-bottom: 16px;
       background: #ffffff;
       box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-      transition: all 0.25s ease;
     }
-    .sos-card:hover {
-      box-shadow: 0 6px 12px rgba(0,0,0,0.06);
-    }
+
     .sos-card.status-open-active {
-      animation: sosPulse 2s infinite;
       border-left: 6px solid var(--accent-red);
     }
     .sos-card.status-claimed {
@@ -78,24 +54,22 @@
       background-color: #f8fafc;
     }
     .sos-card.resolved {
-      border-left: 6px solid var(--primary-green);
-      opacity: 0.75;
+      border-left: 6px solid var(--accent-green);
+      opacity: 0.8;
       background-color: #fbfefc;
     }
 
-    /* Status Pills */
     .status-pill {
       font-size: 0.7rem;
       padding: 3px 10px;
       border-radius: 20px;
       font-weight: 700;
-      letter-spacing: 0.03em;
+      text-transform: uppercase;
     }
     .status-open { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
     .status-claimed-pill { background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; }
     .status-resolved { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; }
 
-    /* Modern Green-Themed Action Buttons */
     .btn-action {
       padding: 7px 14px;
       font-size: 0.8rem;
@@ -108,21 +82,12 @@
       align-items: center;
       justify-content: center;
       gap: 5px;
-      transition: all 0.2s ease;
     }
     .btn-maps { background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; }
-    .btn-maps:hover { background: #e2e8f0; color: #0f172a; }
-    
     .btn-whatsapp { background: #16a34a; color: white; }
-    .btn-whatsapp:hover { background: #15803d; }
-
     .btn-claim { background: #2563eb; color: white; }
-    .btn-claim:hover { background: #1d4ed8; }
-
     .btn-resolve { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; }
-    .btn-resolve:hover { background: #dcfce7; color: #14532d; }
 
-    /* Layout Grids */
     .dashboard-layout {
       display: grid;
       grid-template-columns: 300px 1fr;
@@ -147,79 +112,152 @@
       background: #f8fafc;
       border: 1px solid #e2e8f0;
       border-radius: 6px;
-      padding: 10px;
+      padding: 12px;
       font-size: 0.88rem;
       margin: 10px 0;
       color: #334155;
       white-space: pre-wrap;
+      line-height: 1.4;
     }
   </style>
 </head>
 <body>
   <header>
-    <div class="container" style="display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: 0 auto; padding: 0 16px;">
-      <h1 style="display: flex; align-items: center; gap: 8px;">🐾 PAWS <span style="font-weight: 300; font-size: 0.9rem; color: #a7f3d0;">Responder Command Center</span></h1>
-      <nav style="display: flex; align-items: center;">
-        <a href="index.html">Home / Report SOS</a>
-        <a href="login.html" id="navLogin">Login</a>
-        <button id="navLogout" class="button secondary" style="display: none; background: #115e3b; border: 1px solid #064e3b; color: #ffffff; padding: 5px 12px; border-radius: 6px; cursor: pointer;">Logout</button>
+    <div class="container" style="display: flex; justify-content: space-between; align-items: center;">
+      <h1 style="font-size: 1.25rem; margin: 0; display: flex; align-items: center; gap: 8px;">🐾 PAWS <span style="font-weight: 300; font-size: 0.9rem; color: #a7f3d0;">Responder Command Center</span></h1>
+      <nav>
+        <a href="index.html" style="color: #a7f3d0; text-decoration: none; font-size: 0.9rem; margin-right: 12px;">Home / Report SOS</a>
+        <a href="login.html" id="navLogin" style="color: #a7f3d0; text-decoration: none; font-size: 0.9rem;">Login</a>
+        <button id="navLogout" style="display: none; background: #115e3b; border: 1px solid #064e3b; color: #ffffff; padding: 5px 12px; border-radius: 6px; cursor: pointer;">Logout</button>
       </nav>
     </div>
   </header>
 
-  <main class="container" style="max-width: 1200px; margin: 0 auto; padding: 0 16px;">
-    <!-- Auth Required State -->
-    <div id="authRequired" class="sidebar-card" style="text-align: center; max-width: 500px; margin: 60px auto; padding: 40px;">
-      <h2 style="margin-bottom: 8px; color: var(--text-main);">🔒 Responder Authorization Required</h2>
-      <p class="muted" style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px;">Sign in with your verified responder account to stream active rescue feeds in real time.</p>
-      <a href="login.html" class="btn-action btn-claim" style="padding: 10px 24px; font-size: 0.9rem; text-decoration: none; background: #146b4b;">Sign In Now</a>
+  <main class="container">
+    <!-- Unauthenticated State -->
+    <div id="authRequired" class="sidebar-card" style="text-align: center; max-width: 480px; margin: 60px auto; padding: 36px;">
+      <h2 style="margin-bottom: 8px; color: var(--text-main);">🔒 Responder Login Required</h2>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px;">Please sign in with your verified credentials to access the live emergency dispatch feed.</p>
+      <a href="login.html" class="btn-action btn-claim" style="padding: 10px 24px; font-size: 0.9rem; background: var(--primary-green);">Go To Login Page</a>
     </div>
 
-    <!-- Active Responder Dashboard Grid -->
+    <!-- Authenticated Dashboard -->
     <div id="responderDashboard" class="dashboard-layout" style="display: none;">
-      
-      <!-- Profile Sidebar -->
       <aside class="sidebar-card">
-        <h3 style="font-size: 1.05rem; margin-bottom: 14px; padding-bottom: 8px; border-bottom: 1px solid #e2e8f0; color: #146b4b;">Responder Profile</h3>
+        <h3 style="font-size: 1.05rem; margin-bottom: 14px; padding-bottom: 8px; border-bottom: 1px solid #e2e8f0; color: var(--primary-green);">Responder Profile</h3>
         <div style="display: grid; gap: 8px; font-size: 0.9rem;">
-          <p><strong>Name:</strong> <span id="respName" style="color: var(--text-muted);">Loading...</span></p>
-          <p><strong>Role:</strong> <span id="respRole" style="text-transform: uppercase; color: #146b4b; font-weight: 600;">—</span></p>
-          <p><strong>Email:</strong> <span id="respEmail" style="color: var(--text-muted); word-break: break-all;">—</span></p>
-          <p><strong>Phone:</strong> <span id="respPhone" style="color: var(--text-muted);">—</span></p>
-          <p><strong>Area:</strong> <span id="respArea" style="color: var(--text-muted);">—</span></p>
+          <p><strong>Email:</strong> <span id="respEmail" style="color: var(--text-muted); word-break: break-all;">Loading...</span></p>
+          <p><strong>Status:</strong> <span style="color: var(--accent-green); font-weight: 600;">Active Dispatcher</span></p>
         </div>
-
-        <div id="licenseBox" style="display: none; margin-top: 14px; padding: 10px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 6px;">
-          <small style="color: #166534; font-weight: 700;">✔ Vet License Verified</small>
-          <p style="font-size: 0.85rem; margin: 4px 0 0 0; color: #14532d;" id="respLicense">—</p>
-        </div>
-
         <button id="logoutBtn" class="btn-action" style="width: 100%; margin-top: 20px; background: #fef2f2; color: #991b1b; border: 1px solid #fecaca;">
-          Sign Out Securely
+          Sign Out
         </button>
       </aside>
 
-      <!-- Live Emergency Stream Section -->
       <section>
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
-          <h2 style="font-size: 1.25rem; color: #0f172a;">Active Emergency Feed</h2>
-        </div>
-        
+        <h2 style="font-size: 1.25rem; color: #0f172a; margin-bottom: 14px;">Active Emergency Stream</h2>
         <div id="feedStatus" style="padding: 10px 14px; background: #e6f4ea; color: #137333; border: 1px solid #bbf7d0; border-radius: 8px; font-size: 0.88rem; margin-bottom: 16px; font-weight: 500;">
-          Establishing secure connection to real-time SOS stream...
+          Connecting to live database...
         </div>
-
-        <div id="sosContainer">
-          <p class="muted" style="color: var(--text-muted);">Listening for incoming emergency alerts...</p>
-        </div>
+        <div id="sosContainer"></div>
       </section>
-
     </div>
   </main>
 
-  <!-- Audio Alert Chime -->
-  <audio id="sosAudio" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto"></audio>
+  <script type="module">
+    import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+    import { getFirestore, collection, onSnapshot, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+    import { firebaseConfig } from "./firebase-config.js";
 
-  <script type="module" src="app.js"></script>
+    if (firebaseConfig && firebaseConfig.apiKey) {
+      const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
+      const db = getFirestore(app);
+      const auth = getAuth(app);
+
+      const authRequired = document.getElementById("authRequired");
+      const responderDashboard = document.getElementById("responderDashboard");
+      const sosContainer = document.getElementById("sosContainer");
+      const feedStatus = document.getElementById("feedStatus");
+
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          authRequired.style.display = "none";
+          responderDashboard.style.display = "grid";
+          document.getElementById("respEmail").textContent = user.email;
+          document.getElementById("navLogin").style.display = "none";
+          document.getElementById("navLogout").style.display = "inline-block";
+
+          onSnapshot(collection(db, "sosReports"), (snapshot) => {
+            sosContainer.innerHTML = "";
+            if (snapshot.empty) {
+              sosContainer.innerHTML = `<p style="color: #64748b;">No active emergency reports available.</p>`;
+              feedStatus.textContent = `LIVE FEED (0 active reports)`;
+              return;
+            }
+
+            feedStatus.textContent = `LIVE FEED (${snapshot.docs.length} total reports)`;
+
+            snapshot.forEach(docSnap => {
+              const data = docSnap.data();
+              const id = docSnap.id;
+              const status = data.status || "open";
+
+              const card = document.createElement("div");
+              card.className = `sos-card ${status === 'open' ? 'status-open-active' : status === 'in-progress' ? 'status-claimed' : 'resolved'}`;
+
+              let pillClass = status === 'open' ? 'status-open' : status === 'in-progress' ? 'status-claimed-pill' : 'status-resolved';
+              let pillText = status === 'open' ? '🚨 OPEN SOS' : status === 'in-progress' ? '🚑 DISPATCHED' : '✅ RESOLVED';
+
+              card.innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px;">
+                  <div>
+                    <h3 style="font-size: 1.05rem; color: #0f172a; margin-bottom: 2px;">${data.animalType || 'Animal Emergency'}</h3>
+                    <small style="color: #64748b;">Urgency Level: <strong style="text-transform: uppercase; color: #dc2626;">${data.urgency || 'High'}</strong></small>
+                  </div>
+                  <span class="status-pill ${pillClass}">${pillText}</span>
+                </div>
+
+                ${data.imageUrl ? `<img src="${data.imageUrl}" alt="SOS Snapshot" style="width: 100%; max-height: 220px; object-fit: cover; border-radius: 6px; margin-bottom: 12px; border: 1px solid #e2e8f0;">` : ''}
+
+                <div class="incident-box">
+                  <strong style="color: #146b4b; display: block; margin-bottom: 4px;">📋 AI Assessment & Incident Notes:</strong>
+                  ${data.description || 'No additional injury details provided.'}
+                </div>
+
+                <div style="font-size: 0.88rem; color: #334155; margin-bottom: 12px; display: grid; gap: 4px;">
+                  <p>📍 <strong>GPS Location:</strong> <span style="font-family: monospace; background: #f1f5f9; padding: 2px 6px; border-radius: 4px;">${data.location || 'Not Specified'}</span></p>
+                  <p>👤 <strong>Reporter:</strong> ${data.reporterName || 'Anonymous'} (${data.reporterPhone || 'No Phone Number'})</p>
+                </div>
+
+                <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; padding-top: 12px; border-top: 1px solid #e2e8f0;">
+                  <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(data.location)}" target="_blank" class="btn-action btn-maps">📍 Open Maps Navigation</a>
+                  ${data.reporterPhone ? `<a href="https://wa.me/${data.reporterPhone.replace(/[^0-9]/g, '')}?text=Hello,%20contacting%20you%20regarding%20your%20PAWS%20rescue%20report:" target="_blank" class="btn-action btn-whatsapp">💬 WhatsApp Reporter</a>` : ''}
+                  ${status === 'open' ? `<button onclick="window.claimSOS('${id}')" class="btn-action btn-claim">🚑 Claim Case</button>` : ''}
+                  ${status !== 'resolved' ? `<button onclick="window.resolveSOS('${id}')" class="btn-action btn-resolve">✅ Mark Resolved</button>` : ''}
+                </div>
+              `;
+              sosContainer.appendChild(card);
+            });
+          });
+        } else {
+          authRequired.style.display = "block";
+          responderDashboard.style.display = "none";
+        }
+      });
+
+      window.claimSOS = async (id) => {
+        await updateDoc(doc(db, "sosReports", id), { status: "in-progress" });
+      };
+
+      window.resolveSOS = async (id) => {
+        await updateDoc(doc(db, "sosReports", id), { status: "resolved" });
+      };
+
+      const handleSignOut = () => signOut(auth).then(() => window.location.reload());
+      document.getElementById("logoutBtn")?.addEventListener("click", handleSignOut);
+      document.getElementById("navLogout")?.addEventListener("click", handleSignOut);
+    }
+  </script>
 </body>
 </html>

@@ -1,96 +1,199 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>PAWS | Animal Rescue</title>
-  <link rel="stylesheet" href="styles.css">
-  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.22.0/dist/tf.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd@2.2.3"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PAWS - AI Animal Emergency SOS</title>
+  <style>
+    :root {
+      --primary-green: #146b4b;
+      --accent-green: #16a34a;
+      --light-green-bg: #e6f4ea;
+      --bg-slate: #f8fafc;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: var(--bg-slate);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: var(--text-main);
+    }
+
+    header {
+      background: var(--primary-green);
+      border-bottom: 1px solid #115e3b;
+      padding: 16px 0;
+      color: white;
+      box-shadow: 0 4px 6px -1px rgba(20, 107, 75, 0.15);
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 16px;
+    }
+
+    .main-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-top: 24px;
+      margin-bottom: 40px;
+    }
+
+    @media (max-width: 768px) {
+      .main-grid { grid-template-columns: 1fr; }
+    }
+
+    .card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.04);
+    }
+
+    .video-container {
+      position: relative;
+      width: 100%;
+      background: #000000;
+      border-radius: 8px;
+      overflow: hidden;
+      aspect-ratio: 4/3;
+    }
+
+    video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    .btn-submit {
+      width: 100%;
+      padding: 12px;
+      background: var(--primary-green);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 14px;
+      transition: background 0.2s;
+    }
+
+    .btn-submit:hover { background: #115e3b; }
+
+    input, textarea, select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 4px;
+      margin-bottom: 12px;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      background: #fff;
+    }
+
+    #mobileDebugBar {
+      margin-top: 10px;
+      padding: 8px 12px;
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-family: monospace;
+      color: #334155;
+    }
+  </style>
+
+  <!-- TensorFlow.js Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.10.0/dist/tf.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd@2.2.2/dist/coco-ssd.min.js"></script>
 </head>
 <body>
-<header class="topbar">
-  <a class="brand" href="#">🐾 PAWS <span>Animal Rescue</span></a>
-  <nav>
-    <a href="#camera">Live camera</a>
-    <a href="#sos">SOS</a>
-    <a href="register.html">Join our team</a>
-    <a href="login.html">Login</a>
-  </nav>
-</header>
-<main>
-<section class="hero">
-  <div>
-    <p class="eyebrow">AUTOMATIC CAMERA SCAN & INJURY DETECTOR</p>
-    <h1>Every paw deserves<br><em>a helping hand.</em></h1>
-    <p>Point the camera at an animal. PAWS automatically captures the frame, evaluates for visible injuries via AI, and opens the SOS alert form.</p>
-    <a class="button" href="#camera">Open rescue camera</a>
-  </div>
-  <div class="hero-art" aria-hidden="true">🐕‍🦺<span>♡</span></div>
-</section>
-
-<section class="panel" id="camera">
-  <div class="section-head">
-    <div>
-      <p class="eyebrow">AUTO SCANNER</p>
-      <h2>Live rescue camera</h2>
+  <header>
+    <div class="container" style="display: flex; justify-content: space-between; align-items: center;">
+      <h1 style="font-size: 1.25rem; margin: 0; display: flex; align-items: center; gap: 8px;">🐾 PAWS <span style="font-size: 0.85rem; font-weight: 300; color: #a7f3d0;">Emergency SOS</span></h1>
+      <nav>
+        <a href="responder.html" style="color: #a7f3d0; text-decoration: none; font-size: 0.9rem; font-weight: 500;">Responder Command Center</a>
+      </nav>
     </div>
-    <span class="pill" id="modelStatus">Dog AI loading…</span>
-  </div>
-  <p class="muted">Start the camera below. When a dog is detected, the camera automatically captures the image, assesses for injuries, and navigates to the SOS form.</p>
-  
-  <div class="camera-grid">
-    <div class="video-wrap">
-      <video id="video" autoplay muted playsinline></video>
-      <canvas id="overlay"></canvas>
-      <div id="cameraPlaceholder">📷<br>Camera preview appears here</div>
-    </div>
-    
-    <div class="camera-side">
-      <div class="stat"><span>Dog detection</span><strong id="detectionStatus">Waiting for camera</strong></div>
-      <div class="stat"><span>Injury status</span><strong id="injuryStatus">Waiting for detection…</strong></div>
-      <div class="stat"><span>Latest detection</span><strong id="latestDetection">No detection yet</strong></div>
-      <div class="stat"><span>Model confidence</span><strong id="confidence">—</strong></div>
-      <button class="button" id="startCamera">Start camera + AI</button>
-      <button class="button secondary" id="stopCamera" disabled>Stop camera</button>
-    </div>
-  </div>
+  </header>
 
-  <div class="notice" style="margin-top: 15px;">
-    <strong>AI Injury Assessment Output:</strong>
-    <p id="geminiResult" style="margin-top: 5px;">Camera idle. Point at a dog to run automatic injury scan.</p>
-  </div>
-</section>
+  <main class="container">
+    <div class="main-grid">
+      
+      <!-- Left: AI Camera Stream -->
+      <section class="card">
+        <h2 style="color: var(--primary-green); margin-top: 0; font-size: 1.15rem;">📷 Real-Time AI Camera Scanner</h2>
+        <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 12px;">
+          Point your camera at the animal. The AI scanner will identify the subject and auto-fill injury details.
+        </p>
 
-<section class="panel" id="sos">
-  <p class="eyebrow">URGENT REPORT</p>
-  <h2>Send an SOS</h2>
-  <p class="muted">Details automatically fill below when an injured animal is scanned.</p>
-  <form id="sosForm">
-    <div class="form-grid">
-      <label>Reporter name<input id="reporterName" required placeholder="Your name"></label>
-      <label>Callback number<input id="reporterPhone" required type="tel" placeholder="+91…"></label>
-      <label class="full">What did you observe?<textarea id="incident" required rows="4" placeholder="Describe the dog's condition and exact landmark…"></textarea></label>
-      <label class="check full"><input id="injuryConfirmed" type="checkbox" required> I have reviewed the report and confirm assistance is needed.</label>
+        <div class="video-container">
+          <video id="webcam" autoplay playsinline muted></video>
+          <canvas id="canvasOverlay"></canvas>
+        </div>
+
+        <div id="mobileDebugBar">
+          AI Status: <span id="debugText" style="color: #2563eb; font-weight: 700;">Initializing...</span>
+        </div>
+      </section>
+
+      <!-- Right: SOS Report Form -->
+      <section class="card">
+        <h2 style="color: var(--primary-green); margin-top: 0; font-size: 1.15rem;">🚨 Submit Emergency SOS</h2>
+        
+        <form id="sosForm">
+          <label style="font-size: 0.85rem; font-weight: 600;">Detected Animal & Condition</label>
+          <input type="text" id="animalType" placeholder="Waiting for AI camera detection..." required>
+
+          <label style="font-size: 0.85rem; font-weight: 600;">Urgency Assessment Level</label>
+          <select id="urgency">
+            <option value="high">Critical / Visible Injury (High Urgency)</option>
+            <option value="medium" selected>Moderate / Stranded / Distressed (Medium)</option>
+            <option value="low">Observation Required (Low)</option>
+          </select>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <div>
+              <label style="font-size: 0.85rem; font-weight: 600;">Reporter Name</label>
+              <input type="text" id="reporterName" placeholder="Your Name" required>
+            </div>
+            <div>
+              <label style="font-size: 0.85rem; font-weight: 600;">Phone Number</label>
+              <input type="tel" id="reporterPhone" placeholder="+91 98765 43210" required>
+            </div>
+          </div>
+
+          <label style="font-size: 0.85rem; font-weight: 600;">GPS Location Coordinates</label>
+          <input type="text" id="location" placeholder="Acquiring GPS location..." readonly required>
+
+          <label style="font-size: 0.85rem; font-weight: 600;">Automated AI Injury Assessment & Notes</label>
+          <textarea id="description" rows="3" placeholder="AI diagnostic observations will auto-populate here..." required></textarea>
+
+          <button type="submit" class="btn-submit">Broadcast Emergency SOS</button>
+        </form>
+
+        <p id="formStatus" style="margin-top: 10px; font-weight: 600; font-size: 0.9rem; text-align: center;"></p>
+      </section>
+
     </div>
-    <div class="actions">
-      <button class="button" type="submit" id="sendSOS">Get location & send SOS</button>
-      <button class="button secondary" type="button" id="getLocation">Get my location</button>
-    </div>
-    <p id="sosMessage" role="status"></p>
-    <p id="locationText" class="muted">Location not captured yet.</p>
-  </form>
-</section>
-</main>
+  </main>
 
-<footer>PAWS Animal Rescue · Automated Emergency Response System.</footer>
-<script src="gemini-config.js"></script>
-<script type="module" src="app.js"></script>
-<!-- Add this in your <nav> header on index.html -->
-<nav>
-  <a href="index.html">Public Camera</a>
-  <a href="responder.html" class="button secondary" style="padding: 6px 14px;">Responder Portal 🚨</a>
-</nav>
-
+  <script type="module" src="app.js"></script>
 </body>
 </html>
